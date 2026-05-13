@@ -87,6 +87,7 @@ type telemetryAPIReceiver struct {
 	exportInterval          time.Duration
 	stopCh                  chan struct{}
 	wg                      sync.WaitGroup
+	lastEventTime           pcommon.Timestamp
 }
 
 func (r *telemetryAPIReceiver) bindListener() (net.Listener, string, error) {
@@ -191,7 +192,10 @@ func (r *telemetryAPIReceiver) flushMetricsLocked(ctx context.Context) error {
 	scopeMetric.Scope().SetName(scopeName)
 	scopeMetric.SetSchemaUrl(semconv.SchemaURL)
 
-	ts := pcommon.NewTimestampFromTime(time.Now())
+	ts := r.lastEventTime
+	if ts == 0 {
+		ts = pcommon.NewTimestampFromTime(time.Now())
+	}
 	r.faaSMetricBuilders.coldstartsMetric.AppendDataPoints(scopeMetric, ts)
 	r.faaSMetricBuilders.errorsMetric.AppendDataPoints(scopeMetric, ts)
 	r.faaSMetricBuilders.timeoutsMetric.AppendDataPoints(scopeMetric, ts)
@@ -357,6 +361,12 @@ func (r *telemetryAPIReceiver) recordMetrics(slice []event) {
 		record, ok := el.Record.(map[string]any)
 		if !ok {
 			continue
+		}
+
+		if t, err := time.Parse(time.RFC3339, el.Time); err == nil {
+			if ets := pcommon.NewTimestampFromTime(t); ets > r.lastEventTime {
+				r.lastEventTime = ets
+			}
 		}
 
 		switch el.Type {
