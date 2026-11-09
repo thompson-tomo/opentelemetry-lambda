@@ -28,3 +28,5 @@ jobs:
           persist-credentials: false
       - name: Build Ruby layer
         uses: $/.github/actions/build-ruby-layer
+      - uses: aws-actions/setup-sam@v2
+      - run: sam build --template-file .cdk.out/IntegrationTest.template.json

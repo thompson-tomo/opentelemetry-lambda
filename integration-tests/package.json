@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "vitest run --config vitest.config.ts",
+    "test:lre": "vitest run --config vitest.lre.config.ts",
+    "test:sam": "vitest run --config vitest.sam.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -5,7 +5,7 @@ const HOOK_TIMEOUT_MS = 600_000; // Generous timeout for CDK deploy and destroy
 
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.ts'],
+    include: ['tests/lre/**/*.test.ts'],
     globalSetup: ['./globalSetup.ts'],
     testTimeout: TEST_TIMEOUT_MS,
     hookTimeout: HOOK_TIMEOUT_MS,

@@ -160,7 +160,7 @@ jobs:
         working-directory: integration-tests
 
       - name: Run integration tests
-        run: npx vitest run --config vitest.config.ts
+        run: npx vitest run --config vitest.lre.config.ts
         working-directory: integration-tests
         env:
           TEST_LANGUAGE: ${{ matrix.language }}
